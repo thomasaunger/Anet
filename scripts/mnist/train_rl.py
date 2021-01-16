@@ -120,7 +120,7 @@ for m, model_name in enumerate(model_names):
         "coef":   "",
         "suffix": suffix}
     
-    model_name_parts["info"] = ("_%s%s_" + roles[m]) % ("_no-comm" if args.no_comm else "",
+    model_name_parts["info"] = ("%s%s_" + roles[m]) % ("_no-comm" if args.no_comm else "",
                                                         "_conventional" if args.conventional else "")
     default_model_name = "{env}_{algo}_{arch}_{instr}_{mem}_seed{seed}{info}{coef}_{suffix}".format(**model_name_parts)
     if pretrained[m]:
