@@ -5,7 +5,7 @@ def get_local(obs):
     # get local view
     return obs["image"]*0.0
 
-def reset(env):
+def reset(env, conventional, archimedean):
     obs                   = env.reset()
     active_sender         = True
     active_receiver       = not active_sender
@@ -14,11 +14,11 @@ def reset(env):
     sending               = (active_sender, False)
     globs                 = obs.copy()
     obs["image"]          = get_local(obs)
-    obss                  = (globs, obs)
+    obss                  = (globs, obs) if not archimedean else (obs, globs)
     extra                 = (0)
     return active, acting, sending, obss, extra
 
-def step(env, action, prev_result):
+def step(env, conventional, archimedean, action, prev_result):
     if prev_result[0][1]:
         # receiver's frame
         obs, reward, done, info = env.step(action)
@@ -31,7 +31,7 @@ def step(env, action, prev_result):
         sending                 = (active_sender, False)
         globs                   = obs.copy()
         obs["image"]            = get_local(obs)
-        obss                    = (globs, obs)
+        obss                    = (globs, obs) if not archimedean else (obs, globs)
         extra = (0)
     else:
         # sender's frame
@@ -46,24 +46,26 @@ def step(env, action, prev_result):
         extra           = (0)
     return active, acting, sending, obss, extra, reward, done
 
-def worker(conn, env):
+def worker(conn, env, conventional, archimedean):
     while True:
         cmd, action, prev_result = conn.recv()
         if cmd == "step":
-            conn.send(step(env, action, prev_result))
+            conn.send(step(env, conventional, archimedean, action, prev_result))
         elif cmd == "reset":
-            conn.send(reset(env))
+            conn.send(reset(env, conventional, archimedean))
         else:
             raise NotImplementedError
 
 class ParallelEnv(gym.Env):
     """A concurrent execution of environments in multiple processes."""
 
-    def __init__(self, env):
+    def __init__(self, env, conventional, archimedean):
         assert len(env) >= 1, "No environment given."
 
         self.env               = env
         self.num_procs         = len(env)
+        self.conventional      = conventional
+        self.archimedean       = archimedean
         self.observation_space = self.env[0].observation_space
         self.action_space      = self.env[0].action_space
         
@@ -72,7 +74,7 @@ class ParallelEnv(gym.Env):
         for i, env in enumerate(self.env[1:]):
             local, remote = Pipe()
             self.locals.append(local)
-            p = Process(target=worker, args=(remote, env))
+            p = Process(target=worker, args=(remote, env, conventional, archimedean))
             p.daemon = True
             p.start()
             remote.close()
@@ -81,13 +83,13 @@ class ParallelEnv(gym.Env):
     def reset(self):
         for local in self.locals:
             local.send(("reset", None, None))
-        self.prev_results = [reset(self.env[0])] + [local.recv() for local in self.locals]
+        self.prev_results = [reset(self.env[0], self.conventional, self.archimedean)] + [local.recv() for local in self.locals]
         return zip(*self.prev_results)
 
     def step(self, actions):
         for local, action, prev_result in zip(self.locals, actions[1:, 1], self.prev_results[1:]):
             local.send(("step", action, prev_result))
-        self.prev_results = [step(self.env[0], actions[0, 1], self.prev_results[0])] + [local.recv() for local in self.locals]
+        self.prev_results = [step(self.env[0], self.conventional, self.archimedean, actions[0, 1], self.prev_results[0])] + [local.recv() for local in self.locals]
         return zip(*self.prev_results)
 
     def render(self):
