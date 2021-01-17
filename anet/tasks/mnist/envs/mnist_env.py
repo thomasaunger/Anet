@@ -22,7 +22,7 @@ class MNISTEnv(gym.Env):
         self.observation_space = spaces.Box(
             low   = 0.0,
             high  = 1.0,
-            shape = (28, 28, 3),
+            shape = (28, 28, 1),
             dtype = "float32"
         )
         self.observation_space = spaces.Dict({
@@ -61,8 +61,8 @@ class MNISTEnv(gym.Env):
     
     def reset(self):
         batch_idx, (data, target) = next(self.data)
-        image = np.zeros((28, 28, 3))
-        image[:, :, 1] = data.squeeze().numpy()
+        image = np.zeros((28, 28, 1))
+        image[:, :, 0] = data.squeeze().numpy()
         self.target = target
         
         agent_dir = 0
