@@ -59,6 +59,10 @@ parser.add_argument("--len-message", type=int, default=8,
 parser.add_argument("--num-symbols", type=int, default=8,
                     help="number of symbols (default: 8)")
 
+# Environment arguments
+parser.add_argument("--archimedean", action="store_true", default=False,
+                    help="use Archimedean receiver")
+
 # Training arguments
 parser.add_argument("--frames", type=int, default=int(9e10),
                     help="number of frames of training (default: 9e10)")
@@ -101,7 +105,7 @@ for i in range(args.procs):
     #env.seed(100 * args.seed + i)
     envs.append(env)
 
-penv = ParallelEnv(envs)
+penv = ParallelEnv(envs, args.conventional, args.archimedean)
 
 # Define model names.
 roles       = [               "sender",               "receiver"]
@@ -120,8 +124,9 @@ for m, model_name in enumerate(model_names):
         "coef":   "",
         "suffix": suffix}
     
-    model_name_parts["info"] = ("%s%s_" + roles[m]) % ("_no-comm" if args.no_comm else "",
-                                                        "_conventional" if args.conventional else "")
+    model_name_parts["info"] = ("%s%s%s_" + roles[m]) % ("_no-comm" if args.no_comm else "",
+                                                        "_conventional" if args.conventional else "",
+                                                        "_archimedean"  if args.archimedean  else "")
     default_model_name = "{env}_{algo}_{arch}_{instr}_{mem}_seed{seed}{info}{coef}_{suffix}".format(**model_name_parts)
     if pretrained[m]:
         default_model_name = pretrained[m] + "_pretrained_" + default_model_name
