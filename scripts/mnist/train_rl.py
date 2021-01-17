@@ -20,7 +20,7 @@ import anet.utils as utils
 import babyai.utils
 
 from anet.arguments          import ArgumentParser
-from anet.models.babyai      import ACModel
+from anet.models.mnist       import ACModel
 from anet.rl.algos           import PPOAlgo
 from anet.tasks.mnist.utils  import ParallelEnv
 
