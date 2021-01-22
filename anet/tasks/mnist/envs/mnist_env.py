@@ -12,7 +12,14 @@ transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-mnist_data = torchvision.datasets.MNIST("", train=True, download=True, transform=transform)
+def newLoader():
+    mnist_data = torchvision.datasets.MNIST("", train=True, download=True, transform=transform)
+    
+    data_loader = torch.utils.data.DataLoader(mnist_data,
+                                              batch_size = 1,
+                                              shuffle    = True)
+    
+    return data_loader
 
 class MNISTEnv(gym.Env):
     
@@ -29,18 +36,8 @@ class MNISTEnv(gym.Env):
             "image": self.observation_space
         })
         
-        data_loader = torch.utils.data.DataLoader(mnist_data,
-                                                  batch_size = 1,
-                                                  shuffle    = True)
+        data_loader = newLoader()
         self.data = enumerate(data_loader)
-        #batch_idx, (example_data, example_targets) = next(self.data)
-        
-        #example_data_transformed = example_data.squeeze().numpy()
-        
-        #import matplotlib.pyplot as plt
-        #plt.title(example_targets.item())
-        #plt.imshow(example_data_transformed)
-        #plt.show()
     
     def step(self, action):
         # Examples
@@ -60,7 +57,13 @@ class MNISTEnv(gym.Env):
         return self.obs, reward, done, {}
     
     def reset(self):
-        batch_idx, (data, target) = next(self.data)
+        try:
+            batch_idx, (data, target) = next(self.data)
+        except StopIteration:
+            data_loader = newLoader()
+            self.data = enumerate(data_loader)
+            batch_idx, (data, target) = next(self.data)
+        
         image = np.zeros((28, 28, 1))
         image[:, :, 0] = data.squeeze().numpy()
         self.target = target

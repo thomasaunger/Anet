@@ -12,10 +12,18 @@ transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-mnist_data = torchvision.datasets.MNIST("", train=True, download=True, transform=transform)
-idx = ~(~(mnist_data.targets == 0) * ~(mnist_data.targets == 1))
-mnist_data.data    = mnist_data.data[   idx]
-mnist_data.targets = mnist_data.targets[idx]
+def newLoader():
+    mnist_data = torchvision.datasets.MNIST("", train=True, download=True, transform=transform)
+    
+    idx = ~(~(mnist_data.targets == 0) * ~(mnist_data.targets == 1))
+    mnist_data.data    = mnist_data.data[   idx]
+    mnist_data.targets = mnist_data.targets[idx]
+    
+    data_loader = torch.utils.data.DataLoader(mnist_data,
+                                              batch_size = 1,
+                                              shuffle    = True)
+    
+    return data_loader
 
 class MNISTEnvBinary(gym.Env):
     
@@ -32,9 +40,7 @@ class MNISTEnvBinary(gym.Env):
             "image": self.observation_space
         })
         
-        data_loader = torch.utils.data.DataLoader(mnist_data,
-                                                  batch_size = 1,
-                                                  shuffle    = True)
+        data_loader = newLoader()
         self.data = enumerate(data_loader)
     
     def step(self, action):
@@ -55,7 +61,13 @@ class MNISTEnvBinary(gym.Env):
         return self.obs, reward, done, {}
     
     def reset(self):
-        batch_idx, (data, target) = next(self.data)
+        try:
+            batch_idx, (data, target) = next(self.data)
+        except StopIteration:
+            data_loader = newLoader()
+            self.data = enumerate(data_loader)
+            batch_idx, (data, target) = next(self.data)
+        
         image = np.zeros((28, 28, 1))
         image[:, :, 0] = data.squeeze().numpy()
         self.target = target
