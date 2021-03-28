@@ -1,5 +1,5 @@
 # Anet
-This is a package for the study of [*cultural evolution*](https://en.wikipedia.org/wiki/Cultural_evolution), in particular the emergence of discrete communication. This package generalizes the [BabyAI S/R](https://github.com/thomasaunger/babyai_sr) package to arbitrary tasks.
+This is a package for the study of [*cultural evolution*](https://en.wikipedia.org/wiki/Cultural_evolution) and the emergence of discrete communication in particular. This package generalizes the [BabyAI S/R](https://github.com/thomasaunger/babyai_sr) package to arbitrary tasks.
 
 ## Installation
 
