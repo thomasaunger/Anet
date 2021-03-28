@@ -72,6 +72,8 @@ parser.add_argument("--beta1", type=float, default=0.9,
                     help="beta1 for Adam (default: 0.9)")
 parser.add_argument("--beta2", type=float, default=0.999,
                     help="beta2 for Adam (default: 0.999)")
+parser.add_argument("--frames-per-proc", type=int, default=40,
+                    help="number of frames per process before update (default: 40)")
 parser.add_argument("--recurrence", type=int, default=1,
                     help="number of timesteps gradient is backpropagated (default: 1)")
 parser.add_argument("--optim-eps", type=float, default=1e-5,
@@ -100,9 +102,8 @@ babyai.utils.seed(args.seed)
 # Generate environments.
 envs = []
 for i in range(args.procs):
-    #env = gym.make("anet:mnist-v0")
     env = gym.make(args.env)
-    #env.seed(100 * args.seed + i)
+    env.seed(100 * args.seed + i)
     envs.append(env)
 
 penv = ParallelEnv(envs, args.conventional, args.archimedean)
