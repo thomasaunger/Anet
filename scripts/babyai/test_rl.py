@@ -35,6 +35,10 @@ parser.add_argument("--archimedean", action="store_true", default=False,
 parser.add_argument("--informed-sender", action="store_true", default=False,
                     help="allows sender to see the instruction")
 
+# Algorithm arguments
+parses.add_argument("--frames-per-proc", type=int, default=160,
+                    help="number of frames per process before update (default: 160)")
+
 # Testing arguments
 parser.add_argument("--sample", action="store_true", default=False,
                     help="sample messages instead of using argmax")
