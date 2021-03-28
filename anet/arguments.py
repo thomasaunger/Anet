@@ -23,8 +23,6 @@ class ArgumentParser(argparse.ArgumentParser):
                             help="number of processes (default: 64)")
 
         # Algorithm arguments
-        self.add_argument("--frames-per-proc", type=int, default=160,
-                            help="number of frames per process before update (default: 160)")
         self.add_argument("--discount", type=float, default=0.99,
                             help="discount factor (default: 0.99)")
         self.add_argument("--reward-scale", type=float, default=20.,
