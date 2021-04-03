@@ -74,7 +74,7 @@ parser.add_argument("--beta1", type=float, default=0.9,
                     help="beta1 for Adam (default: 0.9)")
 parser.add_argument("--beta2", type=float, default=0.999,
                     help="beta2 for Adam (default: 0.999)")
-parses.add_argument("--frames-per-proc", type=int, default=160,
+parser.add_argument("--frames-per-proc", type=int, default=160,
                     help="number of frames per process before update (default: 160)")
 parser.add_argument("--recurrence", type=int, default=160,
                     help="number of timesteps gradient is backpropagated (default: 160)")
