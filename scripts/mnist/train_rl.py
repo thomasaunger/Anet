@@ -102,8 +102,8 @@ babyai.utils.seed(args.seed)
 # Generate environments.
 envs = []
 for i in range(args.procs):
-    env = gym.make(args.env)
-    env.seed(100 * args.seed + i)
+    env = gym.make(args.env, procs=args.procs, proc_id=i)
+    env.seed(args.seed)
     envs.append(env)
 
 penv = ParallelEnv(envs, args.conventional, args.archimedean)
