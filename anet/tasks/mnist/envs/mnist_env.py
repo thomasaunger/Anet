@@ -8,7 +8,10 @@ from gym.utils import seeding
 from torchvision import transforms
 
 class MNISTEnv(gym.Env):
-    def __init__(self, n=10):
+    def __init__(self, n=10, procs=0, proc_id=-1, train=True):
+        assert  0 < procs,   "Must specify number of processes"
+        assert -1 < proc_id, "Must specify process id"
+        
         self.action_space = spaces.Discrete(10)
         
         self.observation_space = spaces.Box(
@@ -21,7 +24,12 @@ class MNISTEnv(gym.Env):
             "image": self.observation_space
         })
         
-        self.n = n
+        self.n       = n
+        self.procs   = procs
+        self.proc_id = proc_id
+        self.train   = train
+        
+        self.offset  = 0
     
     def step(self, action):
         if action % self.n == self.target:
@@ -76,7 +84,7 @@ class MNISTEnv(gym.Env):
             transforms.ToTensor()
         ])
         
-        mnist_data = torchvision.datasets.MNIST("", train=True, download=True, transform=transform)
+        mnist_data = torchvision.datasets.MNIST("", train=self.train, download=True, transform=transform)
         
         # Only select all digits below self.n
         idx = ~(mnist_data.targets == 0)
@@ -88,8 +96,11 @@ class MNISTEnv(gym.Env):
         
         # Random shuffle
         idx = torch.from_numpy(np_random.permutation(len(mnist_data.data)))
-        mnist_data.data    = mnist_data.data[   idx]
-        mnist_data.targets = mnist_data.targets[idx]
+        mnist_data.data    = mnist_data.data[   idx][(self.proc_id + self.offset) % self.procs::self.procs]
+        mnist_data.targets = mnist_data.targets[idx][(self.proc_id + self.offset) % self.procs::self.procs]
+        
+        # set offset for next loader
+        self.offset = (self.offset + (self.procs - (len(idx) % self.procs))) % self.procs
         
         data_loader = torch.utils.data.DataLoader(mnist_data,
                                                   batch_size = 1)
