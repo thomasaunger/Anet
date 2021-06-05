@@ -142,7 +142,8 @@ for i in range(args.procs):
 penv = ParallelEnv(envs, args.n, args.conventional, args.archimedean, args.informed_sender)
 
 # Define obss preprocessor.
-obss_preprocessor = utils.MultiObssPreprocessor([args.sender, args.receiver], [envs[0].observation_space]*2)
+model_names = [args.sender, args.receiver]
+obss_preprocessor = utils.MultiObssPreprocessor(model_names, [envs[0].observation_space]*2, model_names)
 
 # Define actor--critic models.
 sender   = babyai.utils.load_model(args.sender)
