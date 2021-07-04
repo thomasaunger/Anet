@@ -33,6 +33,8 @@ class ArgumentParser(argparse.ArgumentParser):
                             help="don't use communication")
         self.add_argument("--conventional", action="store_true", default=False,
                             help="reward sender using environment instead of receiver state-value estimate")
+        self.add_argument("--single-precision", action="store_true", default=False,
+                            help="use single-precision floating-point numbers instead of mixed precision")
 
     def parse_args(self):
         """
