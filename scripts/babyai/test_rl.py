@@ -155,7 +155,7 @@ if torch.cuda.is_available():
 
 # Define actor--critic algorithm.
 reshape_reward = lambda _0, _1, reward, _2: args.reward_scale * reward
-base_algo = BaseAlgo(penv, [sender, receiver], args.frames_per_proc, args.discount, args.gae_lambda, obss_preprocessor, reshape_reward, not args.no_comm, args.conventional, not args.sample)
+base_algo = BaseAlgo(penv, [sender, receiver], args.frames_per_proc, args.discount, args.gae_lambda, obss_preprocessor, reshape_reward, not args.no_comm, args.conventional, not args.sample, args.single_precision)
 
 # Test models.
 sender.eval()

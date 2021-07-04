@@ -171,7 +171,8 @@ reshape_reward = lambda _0, _1, reward, _2: args.reward_scale * reward
 algo = PPOAlgo(penv, models, args.frames_per_proc, args.discount, args.lr, args.beta1,
                args.beta2, args.gae_lambda, args.entropy_coef, args.value_loss_coef,
                args.max_grad_norm, args.recurrence, args.optim_eps, args.clip_eps, args.ppo_epochs,
-               args.batch_size, obss_preprocessor, reshape_reward, not args.no_comm, args.conventional)
+               args.batch_size, obss_preprocessor, reshape_reward, not args.no_comm, args.conventional,
+               False, args.single_precision)
 
 for m, model_name in enumerate(model_names):
     optimizer = utils.load_optimizer(model_name, raise_not_found=False)
