@@ -92,8 +92,8 @@ parser.add_argument("--ppo-epochs", type=int, default=4,
                     help="number of epochs for PPO (default: 4)")
 parser.add_argument("--log-interval", type=int, default=1,
                     help="number of updates between two logs (default: 1)")
-parser.add_argument("--save-interval", type=int, default=50,
-                    help="number of updates between two saves (default: 50, 0 means no saving)")
+parser.add_argument("--save-interval", type=int, default=400,
+                    help="number of updates between two saves (default: 400, 0 means no saving)")
 
 args = parser.parse_args()
 
