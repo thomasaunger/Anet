@@ -214,7 +214,7 @@ class ACModel(nn.Module):
 
     def speaker_log_prob(self, dists_speaker, msg):
         torch.distributions.Distribution.set_default_validate_args(False)
-        return dists_speaker.log_prob(msg.byte()).sum(-1)
+        return dists_speaker.log_prob(msg).sum(-1)
     
     def speaker_entropy(self, dists_speaker):
         return dists_speaker.entropy().sum(-1)
