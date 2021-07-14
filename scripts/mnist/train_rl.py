@@ -72,14 +72,14 @@ parser.add_argument("--beta1", type=float, default=0.9,
                     help="beta1 for Adam (default: 0.9)")
 parser.add_argument("--beta2", type=float, default=0.999,
                     help="beta2 for Adam (default: 0.999)")
-parser.add_argument("--frames-per-proc", type=int, default=80,
-                    help="number of frames per process before update (default: 80)")
+parser.add_argument("--frames-per-proc", type=int, default=20,
+                    help="number of frames per process before update (default: 20)")
 parser.add_argument("--recurrence", type=int, default=1,
                     help="number of timesteps gradient is backpropagated (default: 1)")
 parser.add_argument("--optim-eps", type=float, default=1e-5,
                     help="Adam and RMSprop optimizer epsilon (default: 1e-5)")
-parser.add_argument("--batch-size", type=int, default=5120,
-                    help="batch size for PPO (default: 5120)")
+parser.add_argument("--batch-size", type=int, default=1280,
+                    help="batch size for PPO (default: 1280)")
 parser.add_argument("--entropy-coef", type=float, default=0.01,
                     help="entropy term coefficient (default: 0.01)")
 parser.add_argument("--value-loss-coef", type=float, default=0.5,
@@ -92,8 +92,8 @@ parser.add_argument("--ppo-epochs", type=int, default=4,
                     help="number of epochs for PPO (default: 4)")
 parser.add_argument("--log-interval", type=int, default=1,
                     help="number of updates between two logs (default: 1)")
-parser.add_argument("--save-interval", type=int, default=200,
-                    help="number of updates between two saves (default: 200, 0 means no saving)")
+parser.add_argument("--save-interval", type=int, default=800,
+                    help="number of updates between two saves (default: 800, 0 means no saving)")
 
 args = parser.parse_args()
 
