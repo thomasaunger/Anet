@@ -18,9 +18,9 @@ def initialize_parameters(m):
 class ExpertControllerFiLM(nn.Module):
     def __init__(self, in_features, out_features, in_channels, imm_channels):
         super().__init__()
-        self.conv1 = hexagdly.Conv2d(in_channels=in_channels, out_channels=imm_channels, kernel_size=2)
+        self.conv1 = hexagdly.Conv2d(in_channels=in_channels, out_channels=imm_channels, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(imm_channels)
-        self.conv2 = hexagdly.Conv2d(in_channels=imm_channels, out_channels=out_features, kernel_size=2)
+        self.conv2 = hexagdly.Conv2d(in_channels=imm_channels, out_channels=out_features, kernel_size=1)
         self.bn2 = nn.BatchNorm2d(out_features)
         
         self.weight = nn.Linear(in_features, out_features)
@@ -84,11 +84,11 @@ class ACModel(nn.Module):
         self.obs_space = obs_space
 
         self.image_conv = nn.Sequential(
-            hexagdly.Conv2d(in_channels=3, out_channels=128, kernel_size=2),
+            hexagdly.Conv2d(in_channels=3, out_channels=128, kernel_size=1),
             nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=(2, 2), stride=2),
-            hexagdly.Conv2d(in_channels=128, out_channels=128, kernel_size=2),
+            hexagdly.Conv2d(in_channels=128, out_channels=128, kernel_size=1),
             nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=(2, 2), stride=2)
