@@ -6,9 +6,13 @@ def worker(conn, env):
     while True:
         cmd, action = conn.recv()
         if cmd == "step":
-            conn.send(env.step(action))
+            active, acting, sending, obs, extra, reward, done = env.step(action)
+            if done:
+                active, acting, sending, obs, extra = env.reset()
+            conn.send((active, acting, sending, obs, extra, reward, done))
         elif cmd == "reset":
-            conn.send(env.reset())
+            active, acting, sending, obs, extra = env.reset()
+            conn.send((active, acting, sending, obs, extra))
         else:
             raise NotImplementedError
 
@@ -43,7 +47,10 @@ class ParallelEnv(gym.Env):
     def step(self, actions):
         for local, action in zip(self.locals, actions[1:]):
             local.send(("step", action))
-        results = [self.envs[0].step(actions[0])] + [local.recv() for local in self.locals]
+        active, acting, sending, obs, extra, reward, done = self.envs[0].step(actions[0])
+        if done:
+            active, acting, sending, obs, extra = self.envs[0].reset()
+        results = [(active, acting, sending, obs, extra, reward, done)] + [local.recv() for local in self.locals]
         return zip(*results)
 
     def render(self):
